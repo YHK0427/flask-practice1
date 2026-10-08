@@ -1,6 +1,6 @@
 /venv/
 
-/__pycache__/
+**/__pycache__/**
 
 /pdfs/
 
@@ -9,3 +9,5 @@
 .prettierignore
 
 /.vscode/
+
+**/instance/**
