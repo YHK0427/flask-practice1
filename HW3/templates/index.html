@@ -18,6 +18,7 @@
         <a href="{{ url_for('toggle', id=todo.id) }}">완료</a> 
         <span class="{{ 'done' if todo.done }}">{{ todo.text }}</span>
         <span class="note">{{ todo.note or '' }}</span>
+        <a href="{{ url_for('edit', id=todo.id) }}">수정</a>
         <a href="{{ url_for('delete', id=todo.id) }}">Delete</a>
     </li>
     {% endfor %}
