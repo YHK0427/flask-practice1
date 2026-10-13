@@ -6,7 +6,8 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todo.db'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todo.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://flask_user:password@localhost/flask_todo_db'
 db = SQLAlchemy(app)
 
 class Todo(db.Model):
@@ -16,10 +17,8 @@ class Todo(db.Model):
 
     def __repr__(self):
         return f'<Todo {self.id} {self.text}>'
-    
-# 간단한 in-memory 데이터 저장소
-todos = []
- 
+
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
