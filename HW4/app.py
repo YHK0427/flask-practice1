@@ -1,3 +1,4 @@
+import os
 from flask import Flask, Blueprint, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_restx import Api, Resource, fields
@@ -6,7 +7,8 @@ from flask_restx import Api, Resource, fields
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todo.db'
+# 테스트는 DATABASE_URL 로 메모리 DB 를 씁니다. 엔진이 여기서 만들어져 뒤에서 config 를 바꾸면 안 먹습니다.
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///todo.db')
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://flask_user:password@localhost/flask_todo_db'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["ERROR_404_HELP"] = False
@@ -17,6 +19,7 @@ class Todo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.String(100), nullable=False)
     done = db.Column(db.Boolean, default=False)
+    note = db.Column(db.String(500), default="")
 
     def __repr__(self):
         return f'<Todo {self.id} {self.text}>'
@@ -63,11 +66,13 @@ todo_model = api.model("Todo",{
     "id":fields.Integer(readonly=True, description="줄 번호. 서버가 붙입니다"),
     "text": fields.String(required=True, description="할 일 글자", example="우유사기"),
     "done": fields.Boolean(description="완료 여부", example=False),
+    "note": fields.String(description="설명", example="2리터짜리로"),
 })
 
 todo_input = api.model("TodoInput", {
     "text": fields.String(required=True, description="할 일 글자", example="우유 사기"),
     "done": fields.Boolean(description="완료 여부", example=False),
+    "note": fields.String(description="설명", example="2리터짜리로"),
 })
 
 @ns.route("/")
@@ -83,7 +88,8 @@ class TodoList(Resource):
     def post(self):
         """할 일을 하나 만든다"""
         todo = Todo(text=api.payload["text"],
-                    done=api.payload.get("done", False))
+                    done=api.payload.get("done", False),
+                    note=api.payload.get("note", ""))
         db.session.add(todo)
         db.session.commit()
         # 만들었으면 201 과 함께 그것이 어디 있는지 Location 에 적어 줍니다.
@@ -107,6 +113,7 @@ class TodoItem(Resource):
         todo = get_or_abort(id)
         todo.text = api.payload["text"]
         todo.done = api.payload.get("done", False)
+        todo.note = api.payload.get("note", "")
         db.session.commit()
         return todo
     @ns.doc("일부만 바꾸기")
@@ -119,6 +126,8 @@ class TodoItem(Resource):
             todo.text = api.payload["text"]
         if "done" in api.payload:
             todo.done = api.payload["done"]
+        if "note" in api.payload:
+            todo.note = api.payload["note"]
         db.session.commit()
         return todo
     @ns.doc("지우기")
