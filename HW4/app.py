@@ -7,7 +7,7 @@ from flask_restx import Api, Resource, fields
 
 app = Flask(__name__)
 
-# 테스트는 DATABASE_URL 로 메모리 DB 를 씁니다. 엔진이 여기서 만들어져 뒤에서 config 를 바꾸면 안 먹습니다.
+# 테스트할 때는 메모리 DB
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///todo.db')
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://flask_user:password@localhost/flask_todo_db'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -28,7 +28,9 @@ class Todo(db.Model):
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        db.session.add(Todo(text=request.form['todo']))
+        todo = Todo(text=request.form['todo'],
+                    note=request.form['note'])
+        db.session.add(todo)
         db.session.commit()
         return redirect(url_for('index'))
     
