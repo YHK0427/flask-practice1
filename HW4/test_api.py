@@ -1,7 +1,6 @@
 import os
 import unittest
 
-# app.py 를 가져오기 전에 정해야 메모리 DB 를 씁니다. instance/todo.db 를 건드리지 않습니다.
 os.environ["DATABASE_URL"] = "sqlite:///:memory:"
 import app as todo_app          # 2차시에 친 app.py 를 가져온다
 
