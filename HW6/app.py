@@ -34,3 +34,7 @@ class Predict(Resource):
         x = pd.DataFrame([[d["quantity"], d["unit_price"]]], columns=["quantity", "unit_price"])
         x["qp"] = x["quantity"] * x["unit_price"]   # 학습 때 더한 feature 를 똑같이
         return {"total_sales": int(round(model.predict(x)[0]))}
+
+
+if __name__ == "__main__":
+    app.run()   # python app.py 로 띄워도 flask --app app run 과 같은 주소 (127.0.0.1:5000)

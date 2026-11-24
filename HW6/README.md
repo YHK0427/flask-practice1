@@ -6,7 +6,8 @@
 2. flask --app app run 뒤 http://127.0.0.1:5000/api/docs
 
 - 가상환경은 6장 `data_analysis` 것 그대로. 패키지 : `pip install pandas scikit-learn joblib flask flask-restx jupyter ipykernel` (scikit-learn 1.9.1 에서 실행)
-- `HW6/` 에서 실행. Run All 하면 단계 ⑥ 에서 `sales_model.pkl` 이 다시 만들어짐
+- `HW6/` 에서 실행. Run All 하면 단계 ⑥ 에서 `sales_model.pkl` 이 다시 만들어짐. scikit-learn 버전이 다르면 서버를 켤 때 joblib.load 가 버전 경고를 내는데, 답은 같고 Run All 로 pkl 을 다시 만들면 경고도 사라짐 (1.5.2 · 1.9.1 에서 확인)
+- `python app.py` 로 띄워도 같은 주소에서 켜짐
 - /api/docs 에서 POST `/api/sales/predict` → Try it out → Execute. 그 화면이 `docs.png` (Response body `{"total_sales": 8000000}`)
 
 | 파일 | 내용 |
